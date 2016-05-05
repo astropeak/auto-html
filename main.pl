@@ -23,6 +23,7 @@ sub _divide_element_horizonally{
         my $e = Aspk::HtmlElement->new({tag=>"div"});
         $e->style(height,"100%");
         $e->style(width,$_);
+        $e->style(display, "inline-block");
         $element->add_child($e);
     }
 
@@ -40,9 +41,31 @@ sub divide_element {
 }
 
 my $e=Aspk::HtmlElement->new({tag=>"div", prop=>{id=>"wrapper"}});
-$e->style("height", "100px");
+$e->style("height", "300px");
+$e->style("width", "600px");
 $e->print();
 
 print "\nDivide the element:\n";
-divide_element($e, "vertically", ["30%", "60%", "10%"]);
+# divide_element($e, "vertically", ["30%", "60%", "10%"]);
+divide_element($e, "horizonally", ["30%", "60%", "10%"]);
 $e->print();
+
+divide_element($e->prop(children)->[1], "vertically", ["30%", "40%"]);
+
+my $h = Aspk::HtmlElement->new({tag=>"html"});
+my $b = Aspk::HtmlElement->new({tag=>"body"});
+$h->add_child($b);
+$b->add_child($e);
+
+print "\nHtml:\n";
+
+
+$h->traverse({prefunc=> sub
+              {
+                  my $para=shift;
+                  my $e = $para->{node};
+                  $e->style("border", "solid 1px red")->style('box-sizing', "border-box")
+                      ->style('padding', 0)->style('margin-left',"-10px") if ($e->prop(tag) eq 'div');
+              }});
+
+$h->print();
