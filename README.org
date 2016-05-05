@@ -1,0 +1,28 @@
+* Auto Html
+  Generating html and css files according to a given templete. Mainly used to create static html files and its layout.
+** Implementation
+*** low level function
+    1. add child element
+       #+begin_src c
+       HtmlElement add_child(HtmlElement parent, HtmlElement child, Position pos)
+       #+end_src
+       一个parent element最多被划分为两格，不论在水平还是垂直方向。 这是最简单的情况，复杂的情况都可以通过这个实现。
+       
+       先不考虑复杂的实现，pos指定 方向，如果为水平，则再指定靠左还是靠右，如不指定，则排在之前的child后。
+       #+begin_src c
+       struct Position {
+         int oritation; //水平还是垂直
+         int leftp; //靠在最左
+         int rightp;
+         int topp;
+         int bottomp;
+       }
+       #+end_src
+
+       生成复杂的网格，都可以基于这个函数了。这个就是递归的基本情况。
+
+** Ideas
+*** 模板中支持原生HTML作为一个element的内容。
+    这样便改变了编写html文件的方式。用户不用过多的关注太多的html的细节。
+** how to run
+   just ./run.sh
