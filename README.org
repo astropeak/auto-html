@@ -21,6 +21,18 @@
 
        生成复杂的网格，都可以基于这个函数了。这个就是递归的基本情况。
 
+** todo
+*** TODO add parent paremeter to HtmlElement
+*** TODO fix inline-block margin problem
+*** TODO add more style at a time
+    Support both parameter:
+    #+begin_src perl
+    # 1.
+    $e->style("width", "100px");
+    # 2.
+    $e->style({width=>"100px",height=>"200px"});
+    #+end_src
+
 ** Ideas
 *** 模板中支持原生HTML作为一个element的内容。
     这样便改变了编写html文件的方式。用户不用过多的关注太多的html的细节。
