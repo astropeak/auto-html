@@ -43,12 +43,15 @@ sub divide_element {
 my $e=Aspk::HtmlElement->new({tag=>"div", prop=>{id=>"wrapper"}});
 $e->style("height", "300px");
 $e->style("width", "600px");
-$e->print();
+# $e->print();
 
 print "\nDivide the element:\n";
 # divide_element($e, "vertically", ["30%", "60%", "10%"]);
-divide_element($e, "horizonally", ["30%", "60%", "10%"]);
-$e->print();
+divide_element($e, "horizonally", ["30%", "50%", "10%"]);
+# $e->print();
+
+my $tc=Aspk::HtmlElement->new({tag=>"text", prop=>{content=>"I am a connect"}});
+$e->prop(children)->[0]->add_child($tc);
 
 divide_element($e->prop(children)->[1], "vertically", ["30%", "40%"]);
 
@@ -64,8 +67,19 @@ $h->traverse({prefunc=> sub
               {
                   my $para=shift;
                   my $e = $para->{node};
-                  $e->style("border", "solid 1px red")->style('box-sizing', "border-box")
-                      ->style('padding', 0)->style('margin-left',"-10px") if ($e->prop(tag) eq 'div');
+                  $e  ->style("border", "solid 1px red")
+                      ->style('box-sizing', "border-box")
+                      ->style('padding', 0)
+                      ->style('margin-left',"-0px")
+                      ->style('vertical-align',"top")
+                      ->style('overflow','auto')
+                      # ->style('font-size',0)
+                      if ($e->prop(tag) eq 'div');
+
+                  $e->add_child($tc) if ($e->prop(tag) eq 'div');
               }});
 
-$h->print();
+$rst = $h->format();
+# print "RST:\n\n$rst";
+open my $fh, ">", "output.html" or die "Can't open file ";
+print $fh $rst;

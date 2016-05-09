@@ -1,5 +1,7 @@
 * Auto Html
   Generating html and css files according to a given templete. Mainly used to create static html files and its layout.
+** similar tools
+   - an online layout generator: http://www.pagecolumn.com/
 ** Implementation
 *** low level function
     1. add child element
