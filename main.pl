@@ -1,17 +1,12 @@
 # push(@INC, "/home/astropeak/Dropbox/project/aspk-code-base/perl");
 use Aspk::HtmlElement;
 
-sub add_child {
-    my ($parent, $child, $pos) = @_;
-}
-
 sub _divide_element_vertically{
     my ($element, $len) =@_;
     foreach (@{$len}) {
-        my $e = Aspk::HtmlElement->new({tag=>"div"});
+        my $e = Aspk::HtmlElement->new({tag=>"div", parent=>$element});
         $e->style(height,$_);
         $e->style(width,"100%");
-        $element->add_child($e);
     }
 
     # return $element->prop(children);
@@ -20,11 +15,10 @@ sub _divide_element_vertically{
 sub _divide_element_horizonally{
     my ($element, $len) =@_;
     foreach (@{$len}) {
-        my $e = Aspk::HtmlElement->new({tag=>"div"});
+        my $e = Aspk::HtmlElement->new({tag=>"div", parent=>$element});
         $e->style(height,"100%");
         $e->style(width,$_);
         $e->style(display, "inline-block");
-        $element->add_child($e);
     }
 
     # return $element->prop(children);
@@ -40,7 +34,10 @@ sub divide_element {
     }
 }
 
-my $e=Aspk::HtmlElement->new({tag=>"div", prop=>{id=>"wrapper"}});
+my $h = Aspk::HtmlElement->new({tag=>"html"});
+my $b = Aspk::HtmlElement->new({tag=>"body", parent=>$h});
+
+my $e=Aspk::HtmlElement->new({tag=>"div", prop=>{id=>"wrapper"}, parent=>$b});
 $e->style("height", "300px");
 $e->style("width", "600px");
 # $e->print();
@@ -50,15 +47,10 @@ print "\nDivide the element:\n";
 divide_element($e, "horizonally", ["30%", "50%", "10%"]);
 # $e->print();
 
-my $tc=Aspk::HtmlElement->new({tag=>"text", prop=>{content=>"I am a connect"}});
-$e->prop(children)->[0]->add_child($tc);
+my $tc=Aspk::HtmlElement->new({tag=>"text", prop=>{content=>"I am a connect"}, parent=>$e->prop(children)->[0]});
+# $e->prop(children)->[0]->add_child($tc);
 
 divide_element($e->prop(children)->[1], "vertically", ["30%", "40%"]);
-
-my $h = Aspk::HtmlElement->new({tag=>"html"});
-my $b = Aspk::HtmlElement->new({tag=>"body"});
-$h->add_child($b);
-$b->add_child($e);
 
 print "\nHtml:\n";
 

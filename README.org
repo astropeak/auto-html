@@ -24,7 +24,9 @@
        生成复杂的网格，都可以基于这个函数了。这个就是递归的基本情况。
 
 ** todo
-*** TODO add parent paremeter to HtmlElement
+*** DONE add parent paremeter to HtmlElement
+    CLOSED: [2016-05-10 Tue 21:26]
+    - State "DONE"       from "TODO"       [2016-05-10 Tue 21:26]
 *** TODO fix inline-block margin problem
 *** TODO add more style at a time
     Support both parameter:
