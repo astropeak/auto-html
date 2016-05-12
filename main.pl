@@ -16,11 +16,19 @@ sub _divide_element_horizonally{
 
 sub _divide_element_vertically{
     my ($element, $len) =@_;
+    my $left=0;
     foreach (@{$len}) {
         my $e = Aspk::HtmlElement->new({tag=>"div", parent=>$element});
-        $e->style(height,"100%");
-        $e->style(width,$_);
-        $e->style(display, "inline-block");
+        # $e->style(height,"100%");
+        # $e->style(width,$_);
+        # $e->style(display, "inline-block");
+        $e  ->style(position, "absolute")
+            ->style(top,0)
+            ->style(bottom,0)
+            ->style(left,$left)
+            ->style(width,$_);
+
+        $left+=$_;
     }
 
     return $element->prop(children);
@@ -60,7 +68,7 @@ sub aaaaa{
         if ($width[0] == $input_tree->prop(data)->{width}) {
             divide_element($element, "horizonally", \@height);
         } else {
-            @width = map {$_ - 8} @width;
+            @width = map {$_ - 0} @width;
             divide_element($element, "vertically", \@width);
         }
 
@@ -118,17 +126,22 @@ $h->traverse({prefunc=> sub
               {
                   my $para=shift;
                   my $e = $para->{node};
-                  $e  ->style("border", "solid 1px red")
-                      ->style('box-sizing', "border-box")
+                  $e  ->style("border", "solid 1px grey")
+                      # ->style('box-sizing', "border-box")
                       ->style('padding', 0)
                       ->style('margin-left',"-0px")
                       ->style('vertical-align',"top")
                       ->style('overflow','hidden')
+                      ->style('border-collapse','collapse')
+                      # ->style('position','relative')
                       # ->style('font-size',0)
                       if ($e->prop(tag) eq 'div');
 
-                  $e->add_child($tc) if ($e->prop(tag) eq 'div') && (scalar(@{($e->prop(children))}) == 0);
+                  $e->add_child($tc) if ($e->prop(tag) eq 'div') && (scalar(@{($e->prop(children))}) == 0) && ($e->style(width) >= 100) && ($e->style(width) ne "100%");
+
+                  $e->style('position','relative') if ($e->style('position') ne 'absolute');
               }});
+
 
 $rst = $h->format();
 # print "RST:\n\n$rst";
