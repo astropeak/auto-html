@@ -93,8 +93,6 @@ my $h = Aspk::HtmlElement->new({tag=>"html"});
 my $b = Aspk::HtmlElement->new({tag=>"body", parent=>$h});
 
 my $e=Aspk::HtmlElement->new({tag=>"div", prop=>{id=>"wrapper"}, parent=>$b});
-$e->style("height", "100");
-$e->style("width", "300");
 # $e->print();
 
 
@@ -113,8 +111,11 @@ my $tc=Aspk::HtmlElement->new({tag=>"text", prop=>{content=>"I am a connect"}});
 
 
 
-
-my $input_tree = build_element_tree("./input");
+my $width=600;
+my $height=400;
+$e->style("height", $height);
+$e->style("width", $width);
+my $input_tree = build_element_tree("./input", $width, $height);
 aaaaa($e, $input_tree);
 # print "herer after aaaaa\n";
 # printHash($e);

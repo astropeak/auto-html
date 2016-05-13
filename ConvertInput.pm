@@ -12,15 +12,17 @@ use Exporter;
 @EXPORT_OK=qw(build_element_tree);
 
 sub build_element_tree{
-    my $file = shift;
-    my $t = createGridTree($file);
+    my ($file, $width, $height) = @_;
+
+    my $t = createGridTree($file, $width, $height);
     calculateWidthAndHeight({node=>$t});
 
     return $t;
 }
 
 sub createGridTree{
-    my $file = shift;
+    my ($file, $width, $height) = @_;
+
     print "file: $file\n";
     open my $fh, '<', $file or die "Can' open file $file";
 
@@ -30,7 +32,7 @@ sub createGridTree{
     # print @g;
     # print "\nTTTT:\n";
 
-    my $rn = Aspk::Tree->new({data=>{id=>"root",width=>300,height=>100}});
+    my $rn = Aspk::Tree->new({data=>{id=>"root",width=>$width,height=>$height}});
     my %elements=();
     foreach my $i (@g){
         # chomp $i;
