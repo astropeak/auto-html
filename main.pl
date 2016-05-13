@@ -60,6 +60,8 @@ sub aaaaa{
     my $children = $input_tree->prop(children);
     print "length of children: ".scalar(@{$children})."\n";
 
+    $element->html_prop(id, $input_tree->prop(data)->{id});
+
     if (scalar(@{$children})>0) {
         print "here\n";
         my @width = map {$_->prop(data)->{width}} @{$children};
