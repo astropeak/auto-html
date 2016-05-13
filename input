@@ -12,6 +12,7 @@ r3c1
 r3c2
 r1c3r2c2r1
 r1c3r2c2r2
-r1c3r2c2r3
 
-r1.divide [10, 20, 30]
+root.divide [1.5, 2, 3]
+r1.divide [1, 2, 3]
+r1c3r2.divide [1,4]

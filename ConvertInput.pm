@@ -4,6 +4,7 @@
 # perl convert-input.pl input
 package ConvertInput;
 use Aspk::Tree;
+use Aspk::Utils;
 use Aspk::debug qw(printHash);
 
 use Exporter;
@@ -21,9 +22,10 @@ sub get_input {
     # printHash(\@grid);
 
     # my @property_info = grep {/^[ \t]*$regexp_tag\.([a-z]+)[ \t]+([^\r\n]*)[ \t\r\n]*$/} @all_input_lines;
-    my @property= grep {/^[ \t]*$regexp_tag\.([a-z]+)/} @all_input_lines;
-    @property= map {/^[ \t]*($regexp_tag)\.([a-z]+)[ \t]+([^\r\n]*)[ \t\r\n]*$/;
-                          {tag=>$1, name=>$2, value=>eval $3}} @property;
+    my @property= grep {/^[ \t]*($regexp_tag|root)\.([a-z]+)/} @all_input_lines;
+    # printHash(\@property);
+    @property= map {/^[ \t]*($regexp_tag|root)\.([a-z]+)[ \t]+([^\r\n]*)[ \t\r\n]*$/;
+                    {tag=>$1, name=>$2, value=>eval $3}} @property;
     # printHash(\@property);
     my %ppp;
     foreach (@property){
@@ -39,7 +41,7 @@ sub build_element_tree{
     printHash($input);
 
     my $t = createGridTree($input->{grid}, $width, $height);
-    calculateWidthAndHeight({node=>$t});
+    calculateWidthAndHeight({node=>$t, property=>$input->{property}});
 
     return $t;
 }
@@ -82,77 +84,50 @@ sub createGridTree{
 
 
 sub calculateWidthAndHeight{
+    print "Enter calculateWidthAndHeight\n";
+
     my $para=shift;
     my $node =$para->{node};
-    # my $data=Tree::getData($node);
+    my $property =$para->{property};
     my $data=$node->prop(data);
-    # if (exists($data->{width}) && exists($data->{height}) ){
-    # }
-    # my $children=Tree::getChilderen($node);
     my $children=$node->prop(children);
     if (@{$children}>0) {
-        # if (Tree::getData(@{$children}[0])->{id} =~ m/.*c[0-9]{1,10}$/) {
+        my $tmp = $property->{$node->prop(data)->{id}};
+        print "id: ".$node->prop(data)->{id}.", Property:\n";
+        printHash($tmp->{divide});
+        my @divides = @{$tmp->{divide}} || map {1} @{$children};
+        if (exists $tmp->{divide}) {
+            @divides = map {$_} @{$tmp->{divide}};
+        } else {
+            @divides = map {1} @{$children};
+        }
+
+
+        print "divide and children:\n";
+        printHash({divides=>\@divides, children=>$children});
+
+        die "Divides size not match. " if @divides != @{$children};
+        my $total = Aspk::Utils::reduce(@divides);
+        my @ddd = map {$_/$total} @divides;
+
         if (@{$children}[0]->prop(data)->{id} =~ m/.*c[0-9]{1,10}$/) {
             # node is column
-            my $i;
-            my $w;
-            foreach my $c (@{$children}){
-                # my $d=Tree::getData($c);
-                my $d=$c->prop(data);
-                if (!exists($d->{width})){
-                    ++$i;
-                }else {
-                    $w+=$d->{width};
-                }
-            }
-
-            foreach my $c (@{$children}){
-                # if (!exists((Tree::getData($c))->{width})){
-                if (!exists($c->prop(data)->{width})){
-                    die "Parent width not given: $data->{id}." if (!exists($data->{width}));
-                    # (Tree::getData($c))->{width} = ($data->{width}-$w)/$i;
-                    $c->prop(data)->{width} = ($data->{width}-$w)/$i;
-                }
-
-                # if (!exists((Tree::getData($c))->{height})){
-                if (!exists($c->prop(data)->{height})){
-                    # (Tree::getData($c))->{height} = $data->{height};
-                    $c->prop(data)->{height} = $data->{height};
-                }
-
+            for(my $i=0;$i<@{$children};$i++) {
+                die "Parent width not given: $data->{id}." if (!exists($data->{width}));
+                $children->[$i]->prop(data)->{width} = $data->{width} * $ddd[$i];
+                $children->[$i]->prop(data)->{height} = $data->{height};
             }
         } else {
             # parent is row
-            my $i;
-            my $h;
-            foreach my $c (@{$children}){
-                # my $d=Tree::getData($c);
-                my $d=$c->prop(data);
-                if (!exists($d->{height})){
-                    ++$i;
-                }else {
-                    $h+=($d->{height});
-                }
-            }
-            # $h=0;
-            foreach my $c (@{$children}){
-                # if (!exists((Tree::getData($c))->{height})){
-                if (!exists($c->prop(data)->{height})){
-                    die "Parent height not given: $data->{id}." if (!exists($data->{height}));
-                    my $a= ($data->{height}-$h)/$i;
-                    # (Tree::getData($c))->{height} = ($data->{height}-$h)/$i;
-                    $c->prop(data)->{height} = ($data->{height}-$h)/$i;
-                }
-                # if (!exists((Tree::getData($c))->{width})){
-                if (!exists($c->prop(data)->{width})){
-                    # (Tree::getData($c))->{width} = $data->{width};
-                    $c->prop(data)->{width} = $data->{width};
-                }
+            for(my $i=0;$i<@{$children};$i++) {
+                # die "Parent width not given: $data->{id}." if (!exists($data->{width}));
+                $children->[$i]->prop(data)->{width} = $data->{width};
+                $children->[$i]->prop(data)->{height} = $data->{height} * $ddd[$i];
             }
         }
 
         foreach my $n (@{$children}){
-            calculateWidthAndHeight({node=>$n});
+            calculateWidthAndHeight({node=>$n, property=>$property});
         }
     }
 }
