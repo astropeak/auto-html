@@ -1,7 +1,9 @@
+#!/usr/bin/perl
+
 # push(@INC, "/home/astropeak/Dropbox/project/aspk-code-base/perl");
 use Aspk::HtmlElement;
 use ConvertInput qw(build_element_tree);
-use Aspk::debug qw(printHash);
+use Aspk::Debug qw(print_obj);
 
 sub _divide_element_horizonally{
     my ($element, $len) =@_;
@@ -38,7 +40,7 @@ sub _divide_element_vertically{
 sub divide_element {
     my ($element, $oritation, $len) =@_;
     print "Enter divide $oritation\n";
-    printHash($len);
+    print_obj($len);
 
     if ($oritation eq "horizonally") {
         return _divide_element_horizonally($element, $len);
@@ -53,14 +55,20 @@ sub aaaaa{
     my ($element, $input_tree)= @_;
 
     print "Enter aaaaa. element:\n";
-    printHash($element);
+    print_obj($element);
     print "input_tree:\n";
-    printHash($input_tree);
+    print_obj($input_tree);
 
     my $children = $input_tree->prop(children);
     print "length of children: ".scalar(@{$children})."\n";
 
     $element->html_prop(id, $input_tree->prop(data)->{id});
+
+    # add content; should be moved other functions.
+    $element->add_child(Aspk::HtmlElement->new({tag=>"text",
+                                                prop=>{content=>$input_tree->prop(data)->{content}}}))
+        if (exists $input_tree->prop(data)->{content});
+
 
     if (scalar(@{$children})>0) {
         print "here\n";
@@ -120,7 +128,7 @@ $e->style("width", $width);
 my $input_tree = build_element_tree("./input", $width, $height);
 aaaaa($e, $input_tree);
 # print "herer after aaaaa\n";
-# printHash($e);
+# print_obj($e);
 
 
 
@@ -129,7 +137,8 @@ $h->traverse({prefunc=> sub
               {
                   my $para=shift;
                   my $e = $para->{node};
-                  $e  ->style("border", "solid 1px grey")
+                  $e
+                      ->style("border", "solid 1px grey")
                       # ->style('box-sizing', "border-box")
                       ->style('padding', 0)
                       ->style('margin-left',"-0px")
@@ -143,6 +152,9 @@ $h->traverse({prefunc=> sub
                   $e->add_child($tc) if ($e->prop(tag) eq 'div') && (scalar(@{($e->prop(children))}) == 0) && ($e->style(width) >= 100) && ($e->style(width) ne "100%");
 
                   $e->style('position','relative') if ($e->style('position') ne 'absolute');
+
+                  # change content
+                  # $e->add_child(Aspk::HtmlElement->new({tag=>"text", prop=>{content=>}});
               }});
 
 

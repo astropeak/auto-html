@@ -5,7 +5,7 @@
 package ConvertInput;
 use Aspk::Tree;
 use Aspk::Utils;
-use Aspk::debug qw(printHash);
+use Aspk::Debug qw(print_obj);
 
 use Exporter;
 
@@ -19,14 +19,14 @@ sub get_input {
     my @all_input_lines = <$fh>;
     my $regexp_tag = qr/(?:[rc][0-9]{1,10}){1,100}/;
     my @grid= grep {/^[ \t]*$regexp_tag[ \t\r\n]*$/} @all_input_lines;
-    # printHash(\@grid);
+    # print_obj(\@grid);
 
     # my @property_info = grep {/^[ \t]*$regexp_tag\.([a-z]+)[ \t]+([^\r\n]*)[ \t\r\n]*$/} @all_input_lines;
     my @property= grep {/^[ \t]*($regexp_tag|root)\.([a-z]+)/} @all_input_lines;
-    # printHash(\@property);
+    # print_obj(\@property);
     @property= map {/^[ \t]*($regexp_tag|root)\.([a-z]+)[ \t]+([^\r\n]*)[ \t\r\n]*$/;
                     {tag=>$1, name=>$2, value=>eval $3}} @property;
-    # printHash(\@property);
+    # print_obj(\@property);
     my %ppp;
     foreach (@property){
         $ppp{$_->{tag}}->{$_->{name}} = $_->{value};
@@ -38,10 +38,19 @@ sub get_input {
 sub build_element_tree{
     my ($file, $width, $height) = @_;
     my $input = get_input($file);
-    printHash($input);
+    print_obj($input);
 
     my $t = createGridTree($input->{grid}, $width, $height);
     calculateWidthAndHeight({node=>$t, property=>$input->{property}});
+
+    # add content
+    $t->traverse({prefunc=>
+                      sub{
+                          my $para = shift;
+                          if (exists $input->{property}->{$para->{data}->{id}}->{content}) {
+                              $para->{data}->{content} = $input->{property}->{$para->{data}->{id}}->{content};
+                          }
+                  }});
 
     return $t;
 }
@@ -49,7 +58,7 @@ sub build_element_tree{
 sub createGridTree{
     my ($grid_info, $width, $height) = @_;
 
-    # printHash(\@g);
+    # print_obj(\@g);
     # chomp @g;
     # print @g;
     # print "\nTTTT:\n";
@@ -94,7 +103,7 @@ sub calculateWidthAndHeight{
     if (@{$children}>0) {
         my $tmp = $property->{$node->prop(data)->{id}};
         print "id: ".$node->prop(data)->{id}.", Property:\n";
-        printHash($tmp->{divide});
+        print_obj($tmp->{divide});
         my @divides = @{$tmp->{divide}} || map {1} @{$children};
         if (exists $tmp->{divide}) {
             @divides = map {$_} @{$tmp->{divide}};
@@ -104,7 +113,7 @@ sub calculateWidthAndHeight{
 
 
         print "divide and children:\n";
-        printHash({divides=>\@divides, children=>$children});
+        print_obj({divides=>\@divides, children=>$children});
 
         die "Divides size not match. " if @divides != @{$children};
         my $total = Aspk::Utils::reduce(@divides);

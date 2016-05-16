@@ -12,7 +12,14 @@ r3c1
 r3c2
 r1c3r2c2r1
 r1c3r2c2r2
+r1c3r2c2r3
 
 root.divide [1.5, 2, 3]
 r1.divide [1, 2, 3]
 r1c3r2.divide [1,4]
+r3c2.content "AAAA"
+r2.content "BBBB"
+
+r2.style {'background-image'=>'./img/logo.png', border=>"solid 1px red"}
+r2.css ['active', 'bold']
+r2.innerHTML "<input type=text>"
