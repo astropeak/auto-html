@@ -17,6 +17,10 @@ sub get_input {
     open my $fh, '<', $file or die "Can' open file $file";
 
     my @all_input_lines = <$fh>;
+    # remove comment lines
+    @all_input_lines = grep {/^\s*[^#]/} @all_input_lines;
+    # TODO remove line end comment
+
     my $regexp_id = qr/(?:[rc][0-9]{1,10}){1,100}/;
     my @grid= grep {/^\s*$regexp_id\s*$/} @all_input_lines;
 

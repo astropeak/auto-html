@@ -14,11 +14,12 @@ r1c3r2c2r1
 r1c3r2c2r2
 r1c3r2c2r3
 
-r1c3r2c2r1.style {'background-color'=>'blue'}
+r1c3r2c2r1.style {'background-color'=>'red'}
 r1c3r2c2r2.style {'background-color'=>'yellow'}
-r1c3r2c2r3.style {'background-color'=>'red'}
-r1c3r2c2r\d.style {border=>"solid 1px green"}
-\w*.style {border=>"solid 1px green"}
+r1c3r2c2r3.style {'background-color'=>'blue'}
+# r1c3r2c2r\d.style {border=>"solid 1px green"}
+# \w*.style {border=>"solid 1px green"}
+# root.style {border=>"solid 0px green"}
 
 root.divide [1.5, 2, 3]
 r1.divide [1, 2, 3]
@@ -29,4 +30,3 @@ r2.content '<input type="text"><br>BBB<br>CCC'
 r2.style {'background-image'=>'url(./img/logo.png)',  border=>"solid 1px red"}
 r2.class ['active', 'bold']
 r2.innerHTML "<input type=text>"
-
