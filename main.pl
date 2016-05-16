@@ -3,7 +3,7 @@
 # push(@INC, "/home/astropeak/Dropbox/project/aspk-code-base/perl");
 use Aspk::HtmlElement;
 use ConvertInput qw(build_element_tree);
-use Aspk::Debug qw(print_obj);
+use Aspk::Debug;
 
 sub _divide_element_horizonally{
     my ($element, $len) =@_;
@@ -40,7 +40,7 @@ sub _divide_element_vertically{
 sub divide_element {
     my ($element, $oritation, $len) =@_;
     print "Enter divide $oritation\n";
-    print_obj($len);
+    dbgl($len);
 
     if ($oritation eq "horizonally") {
         return _divide_element_horizonally($element, $len);
@@ -55,9 +55,9 @@ sub aaaaa{
     my ($element, $input_tree)= @_;
 
     print "Enter aaaaa. element:\n";
-    print_obj($element);
+    dbgl($element);
     print "input_tree:\n";
-    print_obj($input_tree);
+    dbgl($input_tree);
 
     my $children = $input_tree->prop(children);
     print "length of children: ".scalar(@{$children})."\n";

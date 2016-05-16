@@ -5,7 +5,7 @@
 package ConvertInput;
 use Aspk::Tree;
 use Aspk::Utils;
-use Aspk::Debug qw(print_obj);
+use Aspk::Debug;
 
 use Exporter;
 
@@ -38,7 +38,7 @@ sub get_input {
 sub build_element_tree{
     my ($file, $width, $height) = @_;
     my $input = get_input($file);
-    print_obj($input);
+    dbgl $input;
 
     my $t = createGridTree($input->{grid}, $width, $height);
     calculateWidthAndHeight({node=>$t, property=>$input->{property}});
@@ -103,7 +103,7 @@ sub calculateWidthAndHeight{
     if (@{$children}>0) {
         my $tmp = $property->{$node->prop(data)->{id}};
         print "id: ".$node->prop(data)->{id}.", Property:\n";
-        print_obj($tmp->{divide});
+        dbgl($tmp->{divide});
         my @divides = @{$tmp->{divide}} || map {1} @{$children};
         if (exists $tmp->{divide}) {
             @divides = map {$_} @{$tmp->{divide}};
@@ -111,9 +111,7 @@ sub calculateWidthAndHeight{
             @divides = map {1} @{$children};
         }
 
-
-        print "divide and children:\n";
-        print_obj({divides=>\@divides, children=>$children});
+        dbgl \@divides, $children;
 
         die "Divides size not match. " if @divides != @{$children};
         my $total = Aspk::Utils::reduce(@divides);
