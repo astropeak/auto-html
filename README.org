@@ -27,7 +27,10 @@
 *** DONE add parent paremeter to HtmlElement
     CLOSED: [2016-05-10 Tue 21:26]
     - State "DONE"       from "TODO"       [2016-05-10 Tue 21:26]
-*** TODO fix inline-block margin problem
+*** DONE fix inline-block margin problem
+    CLOSED: [2016-05-16 Mon 14:20]
+    - State "DONE"       from "TODO"       [2016-05-16 Mon 14:20] \\
+      Using absolute position instead.
 *** TODO add more style at a time
     Support both parameter:
     #+begin_src perl
@@ -40,5 +43,21 @@
 ** Ideas
 *** 模板中支持原生HTML作为一个element的内容。
     这样便改变了编写html文件的方式。用户不用过多的关注太多的html的细节。
+** HTML & CSS knowledge
+*** element align
+    通用思路：使用padding，达到设置的目的。
+    
+    1. horizonally align any elements in a div
+       Just use 'text-align'.
+       | value  | function                       |
+       |--------+--------------------------------|
+       | left   | element align to left(default) |
+       | center | align to center                |
+       | right  | align to right                 |
+    2. vertically align in a div
+       - centering single line of text element
+         Set 'line-height' to div's 'height'.
+       - Other cases, to be added.
+
 ** how to run
    just ./run.sh

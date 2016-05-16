@@ -147,6 +147,11 @@ $h->traverse({prefunc=> sub
                       ->style('border-collapse','collapse')
                       # ->style('position','relative')
                       # ->style('font-size',0)
+
+                      # center the content
+                      ->style('line-height', '100px')
+                      ->style('text-align', 'center')
+
                       if ($e->prop(tag) eq 'div');
 
                   $e->add_child($tc) if ($e->prop(tag) eq 'div') && (scalar(@{($e->prop(children))}) == 0) && ($e->style(width) >= 100) && ($e->style(width) ne "100%");
