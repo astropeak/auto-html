@@ -23,13 +23,31 @@ sub get_input {
     my @property= grep {/^\s*([^.]*)\.(\w+)/} @all_input_lines;
     @property= map {/^\s*([^.]*)\.(\w+)\s+([^\r\n]*)\s*$/;
                     {id=>$1, name=>$2, value=>eval $3}} @property;
-    my %ppp;
-    foreach (@property){
-        $ppp{$_->{id}}->{$_->{name}} = $_->{value};
-    }
+    dbgm \@grid \@property;
+    return {grid=>\@grid, property=>\@property};
+}
 
-    dbgm \@grid \%ppp;
-    return {grid=>\@grid, property=>\%ppp};
+sub get_property_for_id {
+    my ($prop_array, $id) = @_;
+    dbgm $prop_array, $id;
+    my $rst;
+    foreach $elem (@{$prop_array}) {
+        my $rid = $elem->{id};
+        my $regexp = qr/^$rid$/;
+        if ($id =~ $regexp) {
+            my $name = $elem->{name};
+            # All style merged, and later one will override former one
+            if ($name eq 'style') {
+                while (my ($k, $v) = each %{$elem->{value}}) {
+                    $rst->{$name}->{$k} = $v;
+                }
+            } else {
+                $rst->{$name} = $elem->{value};
+            }
+        }
+    }
+    dbgm $rst;
+    return $rst;
 }
 
 sub build_element_tree{
@@ -46,15 +64,9 @@ sub build_element_tree{
                           my $para = shift;
                           my $data = $para->{data};
                           my $id = $data->{id};
-
-                          foreach my $rid (keys %{$input->{property}}) {
-                              my $regexp = qr/^$rid$/;
-                              if ($id =~ $regexp) {
-                                  dbgm $id $regexp;
-                                  while (my ($k, $v) = each %{$input->{property}->{$rid}}) {
-                                      $data->{$k} = $v;
-                                  }
-                              }
+                          my $property = get_property_for_id($input->{property}, $id);
+                          while (my ($k, $v) = each %{$property}) {
+                              $data->{$k} = $v;
                           }
                   }});
 
@@ -108,7 +120,8 @@ sub calculateWidthAndHeight{
     my $data=$node->prop(data);
     my $children=$node->prop(children);
     if (@{$children}>0) {
-        my $tmp = $property->{$node->prop(data)->{id}};
+        # my $tmp = $property->{$node->prop(data)->{id}};
+        my $tmp = get_property_for_id($property, $node->prop(data)->{id});
         dbgl $node->prop(data)->{id};
         dbgl($tmp->{divide});
         my @divides = @{$tmp->{divide}} || map {1} @{$children};
