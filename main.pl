@@ -39,7 +39,7 @@ sub _divide_element_vertically{
 
 sub divide_element {
     my ($element, $oritation, $len) =@_;
-    print "Enter divide $oritation\n";
+    dbgl "Enter divide $oritation\n";
     dbgl($len);
 
     if ($oritation eq "horizonally") {
@@ -54,13 +54,10 @@ sub divide_element {
 sub aaaaa{
     my ($element, $input_tree)= @_;
 
-    print "Enter aaaaa. element:\n";
     dbgl($element);
-    print "input_tree:\n";
     dbgl($input_tree);
 
     my $children = $input_tree->prop(children);
-    print "length of children: ".scalar(@{$children})."\n";
 
     $element->html_prop(id, $input_tree->prop(data)->{id});
 
@@ -71,7 +68,6 @@ sub aaaaa{
 
 
     if (scalar(@{$children})>0) {
-        print "here\n";
         my @width = map {$_->prop(data)->{width}} @{$children};
         my @height = map {$_->prop(data)->{height}} @{$children};
 
@@ -84,13 +80,10 @@ sub aaaaa{
 
         my $total = scalar(@{$children});
         for(my $i=0; $i<$total; $i++) {
-            print "i: $i, total: $total\n";
             aaaaa($element->prop(children)->[$i], $children->[$i]);
         }
     } else {
-        print "in else\n";
     }
-    print "Exit aaaaa\n";
 }
 
 
@@ -167,3 +160,4 @@ $rst = $h->format();
 # print "RST:\n\n$rst";
 open my $fh, ">", "output.html" or die "Can't open file ";
 print $fh $rst;
+print "=> output.html\n";

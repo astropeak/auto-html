@@ -93,7 +93,7 @@ sub createGridTree{
 
 
 sub calculateWidthAndHeight{
-    print "Enter calculateWidthAndHeight\n";
+    dbgl "Enter calculateWidthAndHeight\n";
 
     my $para=shift;
     my $node =$para->{node};
@@ -102,7 +102,7 @@ sub calculateWidthAndHeight{
     my $children=$node->prop(children);
     if (@{$children}>0) {
         my $tmp = $property->{$node->prop(data)->{id}};
-        print "id: ".$node->prop(data)->{id}.", Property:\n";
+        dbgl $node->prop(data)->{id};
         dbgl($tmp->{divide});
         my @divides = @{$tmp->{divide}} || map {1} @{$children};
         if (exists $tmp->{divide}) {
