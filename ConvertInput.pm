@@ -17,21 +17,18 @@ sub get_input {
     open my $fh, '<', $file or die "Can' open file $file";
 
     my @all_input_lines = <$fh>;
-    my $regexp_tag = qr/(?:[rc][0-9]{1,10}){1,100}/;
-    my @grid= grep {/^[ \t]*$regexp_tag[ \t\r\n]*$/} @all_input_lines;
-    # print_obj(\@grid);
+    my $regexp_id = qr/(?:[rc][0-9]{1,10}){1,100}/;
+    my @grid= grep {/^\s*$regexp_id\s*$/} @all_input_lines;
 
-    # my @property_info = grep {/^[ \t]*$regexp_tag\.([a-z]+)[ \t]+([^\r\n]*)[ \t\r\n]*$/} @all_input_lines;
-    my @property= grep {/^[ \t]*($regexp_tag|root)\.([a-z]+)/} @all_input_lines;
-    # print_obj(\@property);
-    @property= map {/^[ \t]*($regexp_tag|root)\.([a-z]+)[ \t]+([^\r\n]*)[ \t\r\n]*$/;
-                    {tag=>$1, name=>$2, value=>eval $3}} @property;
-    # print_obj(\@property);
+    my @property= grep {/^\s*($regexp_id|root)\.(\w+)/} @all_input_lines;
+    @property= map {/^\s*($regexp_id|root)\.(\w+)\s+([^\r\n]*)\s*$/;
+                    {id=>$1, name=>$2, value=>eval $3}} @property;
     my %ppp;
     foreach (@property){
-        $ppp{$_->{tag}}->{$_->{name}} = $_->{value};
+        $ppp{$_->{id}}->{$_->{name}} = $_->{value};
     }
 
+    dbgm \@grid \%ppp;
     return {grid=>\@grid, property=>\%ppp};
 }
 
@@ -43,15 +40,19 @@ sub build_element_tree{
     my $t = createGridTree($input->{grid}, $width, $height);
     calculateWidthAndHeight({node=>$t, property=>$input->{property}});
 
-    # add content
+    # add all property
     $t->traverse({prefunc=>
                       sub{
                           my $para = shift;
-                          if (exists $input->{property}->{$para->{data}->{id}}->{content}) {
-                              $para->{data}->{content} = $input->{property}->{$para->{data}->{id}}->{content};
+                          my $data = $para->{data};
+                          my $id = $data->{id};
+
+                          while (my ($k, $v) = each %{$input->{property}->{$id}}) {
+                              $data->{$k} = $v;
                           }
                   }});
 
+    dbgm $t;
     return $t;
 }
 

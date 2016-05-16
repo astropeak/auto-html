@@ -61,11 +61,21 @@ sub aaaaa{
 
     $element->html_prop(id, $input_tree->prop(data)->{id});
 
-    # add content; should be moved other functions.
+    # add content; TODO: should be moved other functions.
     $element->add_child(Aspk::HtmlElement->new({tag=>"text",
                                                 prop=>{content=>$input_tree->prop(data)->{content}}}))
         if (exists $input_tree->prop(data)->{content});
 
+    # add style
+    while (my ($v, $k) = each %{$input_tree->prop(data)->{style}}) {
+        $element->style($v, $k);
+    }
+
+    # add class
+    foreach (@{$input_tree->prop(data)->{class}}) {
+        # dbgm($_);
+        $element->add_class($_);
+    }
 
     if (scalar(@{$children})>0) {
         my @width = map {$_->prop(data)->{width}} @{$children};
@@ -131,12 +141,12 @@ $h->traverse({prefunc=> sub
                   my $para=shift;
                   my $e = $para->{node};
                   $e
-                      ->style("border", "solid 1px grey")
+                      # ->style("border", "solid 1px grey")
                       # ->style('box-sizing', "border-box")
                       ->style('padding', 0)
                       ->style('margin-left',"-0px")
                       ->style('vertical-align',"top")
-                      ->style('overflow','hidden')
+                      # ->style('overflow','auto')
                       ->style('border-collapse','collapse')
                       # ->style('position','relative')
                       # ->style('font-size',0)
