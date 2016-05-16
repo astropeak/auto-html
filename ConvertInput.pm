@@ -20,8 +20,8 @@ sub get_input {
     my $regexp_id = qr/(?:[rc][0-9]{1,10}){1,100}/;
     my @grid= grep {/^\s*$regexp_id\s*$/} @all_input_lines;
 
-    my @property= grep {/^\s*($regexp_id|root)\.(\w+)/} @all_input_lines;
-    @property= map {/^\s*($regexp_id|root)\.(\w+)\s+([^\r\n]*)\s*$/;
+    my @property= grep {/^\s*([^.]*)\.(\w+)/} @all_input_lines;
+    @property= map {/^\s*([^.]*)\.(\w+)\s+([^\r\n]*)\s*$/;
                     {id=>$1, name=>$2, value=>eval $3}} @property;
     my %ppp;
     foreach (@property){
@@ -47,12 +47,18 @@ sub build_element_tree{
                           my $data = $para->{data};
                           my $id = $data->{id};
 
-                          while (my ($k, $v) = each %{$input->{property}->{$id}}) {
-                              $data->{$k} = $v;
+                          foreach my $rid (keys %{$input->{property}}) {
+                              my $regexp = qr/^$rid$/;
+                              if ($id =~ $regexp) {
+                                  dbgm $id $regexp;
+                                  while (my ($k, $v) = each %{$input->{property}->{$rid}}) {
+                                      $data->{$k} = $v;
+                                  }
+                              }
                           }
                   }});
 
-    dbgm $t;
+    dbgl $t;
     return $t;
 }
 
