@@ -147,17 +147,17 @@ $h->traverse({prefunc=> sub
                       ->style('margin-left',"-0px")
                       ->style('vertical-align',"top")
                       # ->style('overflow','auto')
-                      ->style('border-collapse','collapse')
+                      # ->style('border-collapse','collapse')
                       # ->style('position','relative')
                       # ->style('font-size',0)
 
                       # center the content
-                      ->style('line-height', '100px')
-                      ->style('text-align', 'center')
+                      # ->style('line-height', '100px')
+                      # ->style('text-align', 'center')
 
                       if ($e->prop(tag) eq 'div');
 
-                  $e->add_child($tc) if ($e->prop(tag) eq 'div') && (scalar(@{($e->prop(children))}) == 0) && ($e->style(width) >= 100) && ($e->style(width) ne "100%");
+                  # $e->add_child($tc) if ($e->prop(tag) eq 'div') && (scalar(@{($e->prop(children))}) == 0) && ($e->style(width) >= 100) && ($e->style(width) ne "100%");
 
                   $e->style('position','relative') if ($e->style('position') ne 'absolute');
 
