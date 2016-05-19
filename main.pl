@@ -117,6 +117,13 @@ my $display_string_style = q{
       div:hover .display-string {
       visibility:visible;
       }
+      .display-string:hover{
+        visibility:visible;
+        background-color:black;
+        color:white;
+        /*z-index:2000 !important;*/
+        overflow:hidden;
+      }
       .display-string {
       visibility:hidden;
       font-size:10px;
