@@ -119,10 +119,11 @@ my $display_string_style = q{
       }
       .display-string:hover{
         visibility:visible;
-        background-color:black;
+        background-color:grey;
         color:white;
         /*z-index:2000 !important;*/
         overflow:hidden;
+        border:solid 2px yellow;
       }
       .display-string {
       visibility:hidden;
