@@ -94,6 +94,16 @@ sub aaaaa{
         }
     } else {
     }
+
+    # add display string element
+    $currentZIndex = 1000 if $currentZIndex == 0;
+    $currentZIndex--;
+    my $display_string_element=Aspk::HtmlElement->new({tag=>"p", prop=>{class=>['display-string'], style=>{'z-index'=>$currentZIndex}}});
+    $display_string_element->add_child(Aspk::HtmlElement->new({tag=>"text", prop=>{content=>$element->html_prop(id)}}));
+
+    $element->add_child($display_string_element);
+
+
 }
 
 
@@ -103,8 +113,35 @@ sub aaaaa{
 
 
 my $h = Aspk::HtmlElement->new({tag=>"html"});
-my $b = Aspk::HtmlElement->new({tag=>"body", parent=>$h});
+my $display_string_style = q{
+      div:hover .display-string {
+      visibility:visible;
+      }
+      .display-string {
+      visibility:hidden;
+      font-size:10px;
+      position:absolute;
+      top:0;
+      left:0;
+      bottom:0;
+      right:0;
+      border:solid 1px green;
+      margin:0;
+        padding:0;
+        /* z-index:1000; */
+        text-align:left;
+        line-width:12px;
+        vertical-align:top;
+        background-color:white; 
+        /* opacity:0.5; */
+      }
+};
 
+my $head=Aspk::HtmlElement->new({tag=>"head", parent=>$h});
+my $sssss=Aspk::HtmlElement->new({tag=>"style", parent=>$head});
+my $tttttt = Aspk::HtmlElement->new({tag=>"text", prop=>{content=>$display_string_style}, parent=>$sssss});
+
+my $b = Aspk::HtmlElement->new({tag=>"body", parent=>$h});
 my $e=Aspk::HtmlElement->new({tag=>"div", prop=>{id=>"wrapper"}, parent=>$b});
 # $e->print();
 
@@ -152,14 +189,14 @@ $h->traverse({prefunc=> sub
                       # ->style('font-size',0)
 
                       # center the content
-                      ->style('line-height', '100px')
-                      ->style('text-align', 'center')
+                      # ->style('line-height', '100px')
+                      # ->style('text-align', 'center')
 
                       if ($e->prop(tag) eq 'div');
 
                   $e->add_child($tc) if ($e->prop(tag) eq 'div') && (scalar(@{($e->prop(children))}) == 0) && ($e->style(width) >= 100) && ($e->style(width) ne "100%");
 
-                  $e->style('position','relative') if ($e->style('position') ne 'absolute');
+                  $e->style('position','relative') if ($e->style('position') ne 'absolute') and ($e->prop(tag) ne 'p');
 
                   # change content
                   # $e->add_child(Aspk::HtmlElement->new({tag=>"text", prop=>{content=>}});
